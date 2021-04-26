@@ -5,20 +5,26 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import es from 'date-fns/locale/es'
 import '../assets/scss/dates.scss';
+import { getLastWeek } from '../helpers/dates';
 
 const Dates = () => {
-    const [selectedDate, setSelectedDate] = useState(new Date());
-
     const apiContext = useContext(ApiContext);
     const { getDolar } = apiContext;
+    
+    const [startDate, setStartDate] = useState(getLastWeek());
+    const [endtDate, setEndDate] = useState(new Date());
 
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
+    const handleChangeStartDate = date => {
+        setStartDate(date);
+    };
+
+    const handleChangeEndtDate = date => {
+        setEndDate(date);
     };
 
     useEffect(() => {
-        getDolar();
-    }, [])
+        getDolar(startDate, endtDate);
+    }, [startDate, endtDate])
 
     return (
         <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
@@ -28,8 +34,8 @@ const Dates = () => {
                     id="date-picker-dialog-start"
                     label="Fecha Inicio"
                     format="dd/MM/yyyy"
-                    value={selectedDate}
-                    onChange={handleDateChange}
+                    value={startDate}
+                    onChange={handleChangeStartDate}
                     KeyboardButtonProps={{
                         'aria-label': 'change date',
                     }}
@@ -39,8 +45,8 @@ const Dates = () => {
                     id="date-picker-dialog-end"
                     label="Fecha Término"
                     format="dd/MM/yyyy"
-                    value={selectedDate}
-                    onChange={handleDateChange}
+                    value={endtDate}
+                    onChange={handleChangeEndtDate}
                     KeyboardButtonProps={{
                         'aria-label': 'change date',
                     }}

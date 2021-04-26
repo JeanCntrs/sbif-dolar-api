@@ -1,23 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
+import ApiContext from '../context/ApiContext';
 import { Chart } from 'chart.js';
 import Grid from '@material-ui/core/Grid';
+import Spinner from './Spinner';
 import '../assets/scss/graphic.scss';
 
 const Graphic = () => {
+    const apiContext = useContext(ApiContext);
+    const { loading, data } = apiContext;
+
     useEffect(() => {
-        createChart();
-    }, [])
+        if (!loading && data) {
+            createChart();
+        }
+    }, [loading])
 
     const createChart = () => {
         var ctx = document.getElementById('apiChart');
         new Chart(ctx, {
             type: 'horizontalBar',
             data: {
-                // labels: bands.map(band => band.name),
-                labels: ['label-2', 'label-2', 'label-3', 'label-2', 'label-2', 'label-3', 'label-2', 'label-2', 'label-3', 'label-2', 'label-2', 'label-3'],
+                labels: data.map(element => element.Fecha),
                 datasets: [{
                     label: 'Dólar',
-                    data: ['1', '2', '3', '1', '2', '3', '1', '2', '3', '1', '2', '3'],
+                    data: data.map(element => element.Valor.replace(',','.')),
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -49,9 +55,13 @@ const Graphic = () => {
     }
 
     return (
-        <Grid container xs={12} className="canvas-container-grid">
+        <Grid container className="canvas-container-grid">
             <Grid item xs={10}>
-                <canvas id="apiChart"></canvas>
+                {
+                    loading
+                        ? <Spinner />
+                        : <canvas id="apiChart"></canvas>
+                }
             </Grid>
         </Grid>
     );
